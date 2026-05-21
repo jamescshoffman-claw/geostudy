@@ -201,7 +201,7 @@ function Quiz({ config, onRestart, onStart }: QuizProps) {
 
       insetCountriesG = insetG.append<SVGGElement>('g')
 
-      // Callout indicators in the inset — always visible, color updates when found/missed
+      // Callout indicators in the inset, always visible, color updates when found/missed
       const insetCalloutG = insetG.append<SVGGElement>('g')
       config.inset.callouts?.forEach(ic => {
         const [px, py] = insetProj([ic.lon, ic.lat]) ?? [0, 0]
@@ -347,7 +347,7 @@ function Quiz({ config, onRestart, onStart }: QuizProps) {
         addMapLabel(c, missedLabelsG, '#fff')
       })
       setMissedNames(missed.map(c => c.name))
-      showFeedback(`Game over — you got ${foundSetRef.current.size} / ${config.total}`, '#94a3b8')
+      showFeedback(`Game over! You got ${foundSetRef.current.size} / ${config.total}`, '#94a3b8')
     }
 
     // ── Load TopoJSON ─────────────────────────────────────────────────────
@@ -427,7 +427,7 @@ function Quiz({ config, onRestart, onStart }: QuizProps) {
       setInputStatus('wrong')
       setTimeout(() => setInputStatus(''), 400)
     } else {
-      setFeedback({ msg: `Not a ${config.regionLabel} country — keep trying!`, color: '#f87171' })
+      setFeedback({ msg: `Not a ${config.regionLabel} country. Keep trying!`, color: '#f87171' })
       setInputStatus('wrong')
       setTimeout(() => setInputStatus(''), 400)
     }
@@ -552,12 +552,12 @@ function Quiz({ config, onRestart, onStart }: QuizProps) {
 // ── Page wrapper (owns tab state) ──────────────────────────────────────────
 
 export default function CountriesQuiz() {
-  const [tab, setTab] = useState<RegionKey>('world')
+  const [tab, setTab] = useState<RegionKey>('europe')
   const [resetCount, setResetCount] = useState(0)
   const [adsReady, setAdsReady] = useState(false)
 
   useEffect(() => {
-    document.title = 'Geo Study — Countries Quiz'
+    document.title = 'Geo Study: Countries Quiz'
     return () => {
       document.title = 'James'
     }
@@ -579,8 +579,8 @@ export default function CountriesQuiz() {
         <div className="quiz-header">
           <h1 className="quiz-title">Countries Quiz</h1>
           <p className="quiz-subtitle">
-            Test your geography knowledge — type each country's name to find it on the
-            interactive map. See how many you can identify before the timer runs out.
+            Test your geography knowledge. Type each country's name to find it on the
+            interactive map and see how many you can identify before the timer runs out.
           </p>
         </div>
 
@@ -610,8 +610,8 @@ export default function CountriesQuiz() {
           Geo Study is a free interactive geography quiz that challenges you to name
           countries by region on a real world map. Whether you're prepping for a trivia
           night, brushing up before a trip, or just curious how much of the world you
-          actually know, the quiz is a quick way to measure — and improve — your
-          geographic literacy.
+          actually know, the quiz is a quick way to measure and improve your geographic
+          literacy.
         </p>
 
         <h3>How to play</h3>
@@ -619,10 +619,9 @@ export default function CountriesQuiz() {
           Pick a region tab (World, Europe, Asia, Africa, Americas, or Oceania), click
           <em> Start Quiz</em>, and start typing country names into the input box. Each
           correct answer is marked green on the map. You have ten minutes per round.
-          Aliases and common alternate spellings are accepted — for example,
-          "USA," "United States," and "America" all work. The map supports pinch-to-zoom
-          on touch devices and scroll-wheel zoom on desktop, which is handy for spotting
-          smaller countries.
+          Aliases and common alternate spellings are accepted, so "USA," "United States,"
+          and "America" all work. The map supports pinch-to-zoom on touch devices and
+          scroll-wheel zoom on desktop, which is handy for spotting smaller countries.
         </p>
 
         <h3>Tips for improving</h3>
@@ -636,9 +635,9 @@ export default function CountriesQuiz() {
 
         <h3>Why a country quiz?</h3>
         <p>
-          Geography is one of those skills that compounds quietly: news headlines make
+          Geography is one of those skills that compounds quietly. News headlines make
           more sense, travel planning gets easier, and conversations about world events
-          feel less abstract. The goal of Geo Study isn't to memorize a list — it's to
+          feel less abstract. The goal of Geo Study isn't to memorize a list. It's to
           build a mental map of the world that sticks.
         </p>
       </section>
