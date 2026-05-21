@@ -7,8 +7,7 @@ import { CONFIGS, type QuizConfig, type Country, type RegionKey } from './quizDa
 // Loader is in index.html. Replace the slot IDs below with the ones AdSense
 // gives you when you create the two ad units in the dashboard.
 const AD_CLIENT = 'ca-pub-7665194311315691'
-const AD_SLOT_LEFT  = '4001990616'
-const AD_SLOT_RIGHT = '7541094612'
+const AD_SLOT_LEFT = '4001990616'
 
 function AdSlot({ slot, className }: { slot: string; className?: string }) {
   const pushed = useRef(false)
@@ -46,9 +45,10 @@ const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padSta
 interface QuizProps {
   config: QuizConfig
   onRestart: () => void
+  onStart?: () => void
 }
 
-function Quiz({ config, onRestart }: QuizProps) {
+function Quiz({ config, onRestart, onStart }: QuizProps) {
   const [score, setScore] = useState(0)
   const [foundNames, setFoundNames] = useState<string[]>([])
   const [missedNames, setMissedNames] = useState<string[]>([])
@@ -462,7 +462,7 @@ function Quiz({ config, onRestart }: QuizProps) {
         <div className="quiz-start-row">
           <button
             className="quiz-btn quiz-btn-start"
-            onClick={() => { setStarted(true); setTimeout(() => inputRef.current?.focus(), 50) }}
+            onClick={() => { setStarted(true); onStart?.(); setTimeout(() => inputRef.current?.focus(), 50) }}
           >
             Start Quiz
           </button>
@@ -554,13 +554,12 @@ function Quiz({ config, onRestart }: QuizProps) {
 export default function CountriesQuiz() {
   const [tab, setTab] = useState<RegionKey>('world')
   const [resetCount, setResetCount] = useState(0)
+  const [adsReady, setAdsReady] = useState(false)
 
   useEffect(() => {
-    document.title = 'Countries Quiz'
-    document.body.style.overflow = 'hidden'
+    document.title = 'Geo Study — Countries Quiz'
     return () => {
       document.title = 'James'
-      document.body.style.overflow = ''
     }
   }, [])
 
@@ -571,35 +570,78 @@ export default function CountriesQuiz() {
 
   return (
     <>
-      <aside className="quiz-ad-rail quiz-ad-rail--left" aria-hidden="true">
-        <AdSlot slot={AD_SLOT_LEFT} />
-      </aside>
-      <aside className="quiz-ad-rail quiz-ad-rail--right" aria-hidden="true">
-        <AdSlot slot={AD_SLOT_RIGHT} />
-      </aside>
-    <div className="quiz-page">
-      <div className="quiz-header">
-        <h1 className="quiz-title">Countries Quiz</h1>
+      {adsReady && (
+        <aside className="quiz-ad-rail quiz-ad-rail--left" aria-hidden="true">
+          <AdSlot slot={AD_SLOT_LEFT} />
+        </aside>
+      )}
+      <div className="quiz-page">
+        <div className="quiz-header">
+          <h1 className="quiz-title">Countries Quiz</h1>
+          <p className="quiz-subtitle">
+            Test your geography knowledge — type each country's name to find it on the
+            interactive map. See how many you can identify before the timer runs out.
+          </p>
+        </div>
+
+        <div className="quiz-tabs">
+          {(Object.keys(CONFIGS) as RegionKey[]).map(r => (
+            <button
+              key={r}
+              className={`quiz-tab-btn ${tab === r ? 'active' : ''}`}
+              onClick={() => switchTab(r)}
+            >
+              {CONFIGS[r].label}
+            </button>
+          ))}
+        </div>
+
+        <Quiz
+          key={`${tab}-${resetCount}`}
+          config={CONFIGS[tab]}
+          onRestart={() => setResetCount(c => c + 1)}
+          onStart={() => setAdsReady(true)}
+        />
       </div>
 
-      <div className="quiz-tabs">
-        {(Object.keys(CONFIGS) as RegionKey[]).map(r => (
-          <button
-            key={r}
-            className={`quiz-tab-btn ${tab === r ? 'active' : ''}`}
-            onClick={() => switchTab(r)}
-          >
-            {CONFIGS[r].label}
-          </button>
-        ))}
-      </div>
+      <section className="quiz-about">
+        <h2>About Geo Study</h2>
+        <p>
+          Geo Study is a free interactive geography quiz that challenges you to name
+          countries by region on a real world map. Whether you're prepping for a trivia
+          night, brushing up before a trip, or just curious how much of the world you
+          actually know, the quiz is a quick way to measure — and improve — your
+          geographic literacy.
+        </p>
 
-      <Quiz
-        key={`${tab}-${resetCount}`}
-        config={CONFIGS[tab]}
-        onRestart={() => setResetCount(c => c + 1)}
-      />
-    </div>
+        <h3>How to play</h3>
+        <p>
+          Pick a region tab (World, Europe, Asia, Africa, Americas, or Oceania), click
+          <em> Start Quiz</em>, and start typing country names into the input box. Each
+          correct answer is marked green on the map. You have ten minutes per round.
+          Aliases and common alternate spellings are accepted — for example,
+          "USA," "United States," and "America" all work. The map supports pinch-to-zoom
+          on touch devices and scroll-wheel zoom on desktop, which is handy for spotting
+          smaller countries.
+        </p>
+
+        <h3>Tips for improving</h3>
+        <p>
+          The fastest way to get better is to play, give up, and then study the missed
+          countries in the list shown at the end of each round. Tiny island nations and
+          countries with names that don't look like their English versions (Côte d'Ivoire,
+          Eswatini, Czechia) are the most commonly forgotten. Spending a minute reviewing
+          a missed region before retrying makes a noticeable difference on the next run.
+        </p>
+
+        <h3>Why a country quiz?</h3>
+        <p>
+          Geography is one of those skills that compounds quietly: news headlines make
+          more sense, travel planning gets easier, and conversations about world events
+          feel less abstract. The goal of Geo Study isn't to memorize a list — it's to
+          build a mental map of the world that sticks.
+        </p>
+      </section>
     </>
   )
 }

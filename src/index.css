@@ -438,7 +438,7 @@ a { color: inherit; }
   padding: 20px 24px 16px;
 }
 
-/* AdSense side rails — only on viewports wide enough to flank the 960px quiz */
+/* AdSense side rail — only on viewports wide enough to flank the 960px quiz */
 .quiz-ad-rail { display: none; }
 
 @media (min-width: 1320px) {
@@ -451,9 +451,39 @@ a { color: inherit; }
     height: 600px;
     z-index: 1;
   }
-  .quiz-ad-rail--left  { left:  calc(50% - 480px - 20px - 160px); }
-  .quiz-ad-rail--right { right: calc(50% - 480px - 20px - 160px); }
+  .quiz-ad-rail--left { left: calc(50% - 480px - 20px - 160px); }
 }
+
+.quiz-subtitle {
+  font-size: 0.95rem;
+  color: var(--ink-3);
+  line-height: 1.45;
+  margin: 0;
+  max-width: 640px;
+}
+
+.quiz-about {
+  max-width: 720px;
+  margin: 32px auto 64px;
+  padding: 0 24px;
+  color: var(--ink-2);
+  line-height: 1.65;
+  font-size: 0.95rem;
+}
+.quiz-about h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+  color: var(--ink);
+}
+.quiz-about h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 24px 0 8px;
+  color: var(--ink);
+}
+.quiz-about p { margin: 0 0 12px; }
 
 .quiz-header {
   display: flex;
