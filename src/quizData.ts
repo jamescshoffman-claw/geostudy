@@ -2,6 +2,7 @@ export interface Country {
   id: number
   name: string
   aliases?: string[]
+  labelPos?: [number, number]   // override [lon, lat] when D3 centroid is off-screen
 }
 
 export interface SmallDef {
@@ -66,7 +67,7 @@ const EUROPE: Country[] = [
   { id: 352, name: 'Iceland' },
   { id: 372, name: 'Ireland' },
   { id: 380, name: 'Italy' },
-  { id: -99, name: 'Kosovo' },
+  { id: -99, name: 'Kosovo', labelPos: [21.0, 42.6] },
   { id: 428, name: 'Latvia' },
   { id: 438, name: 'Liechtenstein' },
   { id: 440, name: 'Lithuania' },
@@ -77,7 +78,7 @@ const EUROPE: Country[] = [
   { id: 499, name: 'Montenegro' },
   { id: 528, name: 'Netherlands',        aliases: ['Holland', 'The Netherlands'] },
   { id: 807, name: 'North Macedonia',    aliases: ['Macedonia', 'FYR Macedonia'] },
-  { id: 578, name: 'Norway' },
+  { id: 578, name: 'Norway', labelPos: [8, 62] },
   { id: 616, name: 'Poland' },
   { id: 620, name: 'Portugal' },
   { id: 642, name: 'Romania' },
@@ -97,7 +98,6 @@ const EUROPE: Country[] = [
 
 const EUROPE_SMALL: SmallDef[] = [
   { id: 20,  lon: 1.58,  lat: 42.55, dx: -48, dy: -22 },
-  { id: -99, lon: 20.90, lat: 42.58, dx:  55, dy: -30 },
   { id: 438, lon: 9.55,  lat: 47.17, dx: -50, dy: -22 },
   { id: 470, lon: 14.37, lat: 35.90, dx:  50, dy:  22 },
   { id: 492, lon: 7.40,  lat: 43.74, dx:  50, dy: -22 },
@@ -326,7 +326,6 @@ const WORLD: Country[] = [
 const WORLD_SMALL: SmallDef[] = [
   // European microstates
   { id: 20,  lon:  1.58, lat: 42.55, dx: -50, dy: -15 }, // Andorra
-  { id: -99, lon: 20.90, lat: 42.58, dx:  50, dy:   5 }, // Kosovo
   { id: 438, lon:  9.55, lat: 47.17, dx: -45, dy: -30 }, // Liechtenstein
   { id: 470, lon: 14.37, lat: 35.90, dx:  45, dy:  30 }, // Malta
   { id: 492, lon:  7.40, lat: 43.74, dx:  30, dy: -35 }, // Monaco
