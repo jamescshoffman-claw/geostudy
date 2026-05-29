@@ -40,9 +40,17 @@ export interface QuizConfig {
   regionLabel: string
   winMsg: string
   inset?: InsetDef
+  // Optional overrides for non-country quizzes (e.g. US states).
+  itemNoun?: string         // singular, e.g. 'state' (default 'country')
+  itemNounPlural?: string   // plural, e.g. 'states' (default 'countries')
+  projectionType?: 'mercator' | 'albersUsa'
+  dataSource?: {
+    url: string
+    objectName: string      // key in TopoJSON `objects` (e.g. 'states')
+  }
 }
 
-export type RegionKey = 'world' | 'europe' | 'africa' | 'northamerica' | 'southamerica' | 'asia' | 'oceania'
+export type RegionKey = 'world' | 'europe' | 'africa' | 'northamerica' | 'southamerica' | 'asia' | 'oceania' | 'americanstates'
 
 // ── Europe ────────────────────────────────────────────────────────────────────
 
@@ -312,6 +320,70 @@ const OCEANIA_SMALL: SmallDef[] = [
   { id: 798, lon: 179.2,  lat:  -8.5, dx:  40, dy:  20 }, // Tuvalu
 ]
 
+// ── American States ───────────────────────────────────────────────────────────
+// IDs are numeric FIPS codes used by the us-atlas TopoJSON.
+
+const STATES: Country[] = [
+  { id: 1,  name: 'Alabama' },
+  { id: 2,  name: 'Alaska' },
+  { id: 4,  name: 'Arizona' },
+  { id: 5,  name: 'Arkansas' },
+  { id: 6,  name: 'California',     aliases: ['Cali'] },
+  { id: 8,  name: 'Colorado' },
+  { id: 9,  name: 'Connecticut' },
+  { id: 10, name: 'Delaware' },
+  { id: 12, name: 'Florida' },
+  { id: 13, name: 'Georgia' },
+  { id: 15, name: 'Hawaii' },
+  { id: 16, name: 'Idaho' },
+  { id: 17, name: 'Illinois' },
+  { id: 18, name: 'Indiana' },
+  { id: 19, name: 'Iowa' },
+  { id: 20, name: 'Kansas' },
+  { id: 21, name: 'Kentucky' },
+  { id: 22, name: 'Louisiana' },
+  { id: 23, name: 'Maine' },
+  { id: 24, name: 'Maryland' },
+  { id: 25, name: 'Massachusetts',  aliases: ['Mass'] },
+  { id: 26, name: 'Michigan' },
+  { id: 27, name: 'Minnesota' },
+  { id: 28, name: 'Mississippi' },
+  { id: 29, name: 'Missouri' },
+  { id: 30, name: 'Montana' },
+  { id: 31, name: 'Nebraska' },
+  { id: 32, name: 'Nevada' },
+  { id: 33, name: 'New Hampshire' },
+  { id: 34, name: 'New Jersey' },
+  { id: 35, name: 'New Mexico' },
+  { id: 36, name: 'New York' },
+  { id: 37, name: 'North Carolina' },
+  { id: 38, name: 'North Dakota' },
+  { id: 39, name: 'Ohio' },
+  { id: 40, name: 'Oklahoma' },
+  { id: 41, name: 'Oregon' },
+  { id: 42, name: 'Pennsylvania',   aliases: ['Penn', 'Penna'] },
+  { id: 44, name: 'Rhode Island' },
+  { id: 45, name: 'South Carolina' },
+  { id: 46, name: 'South Dakota' },
+  { id: 47, name: 'Tennessee' },
+  { id: 48, name: 'Texas' },
+  { id: 49, name: 'Utah' },
+  { id: 50, name: 'Vermont' },
+  { id: 51, name: 'Virginia' },
+  { id: 53, name: 'Washington' },
+  { id: 54, name: 'West Virginia' },
+  { id: 55, name: 'Wisconsin' },
+  { id: 56, name: 'Wyoming' },
+]
+
+// Smallest states get callouts. Labels radiate east/south into the Atlantic.
+const STATES_SMALL: SmallDef[] = [
+  { id: 9,  lon: -72.7, lat: 41.6, dx: -60, dy:  20 }, // Connecticut
+  { id: 44, lon: -71.5, lat: 41.7, dx:  70, dy:  -5 }, // Rhode Island
+  { id: 34, lon: -74.5, lat: 40.2, dx:  90, dy:  15 }, // New Jersey
+  { id: 10, lon: -75.5, lat: 39.0, dx: 100, dy:  35 }, // Delaware
+]
+
 // ── World ─────────────────────────────────────────────────────────────────────
 
 const WORLD: Country[] = [
@@ -460,5 +532,22 @@ export const CONFIGS: Record<RegionKey, QuizConfig> = {
     projScale: 350,
     regionLabel: 'Oceanian',
     winMsg: '🎉 You named all 14 countries of Oceania!',
+  },
+  americanstates: {
+    label: 'American States',
+    countries: STATES,
+    smallDef: STATES_SMALL,
+    total: 50,
+    projCenter: [0, 0], // unused by geoAlbersUsa
+    projScale: 1100,
+    regionLabel: 'American',
+    winMsg: '🎉 You named all 50 American states!',
+    itemNoun: 'state',
+    itemNounPlural: 'states',
+    projectionType: 'albersUsa',
+    dataSource: {
+      url: 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json',
+      objectName: 'states',
+    },
   },
 }

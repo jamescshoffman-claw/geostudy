@@ -98,13 +98,16 @@ function Quiz({ config, onRestart, onStart }: QuizProps) {
 
   // ── Share ─────────────────────────────────────────────────────────────────
 
+  const itemNoun = config.itemNoun ?? 'country'
+  const itemNounPlural = config.itemNounPlural ?? 'countries'
+
   const handleShare = () => {
     const elapsed = TIMER_SECONDS - timeLeft
     const timeStr = timeLeft === 0 ? 'Time ran out!' : `Finished in ${formatTime(elapsed)}`
     const resultLine = won
-      ? `🎉 All ${config.total}/${config.total} countries found!`
-      : `✅ ${score}/${config.total} countries found`
-    const text = `Countries Quiz – ${config.label}\n${resultLine}\n⏱️ ${timeStr}`
+      ? `🎉 All ${config.total}/${config.total} ${itemNounPlural} found!`
+      : `✅ ${score}/${config.total} ${itemNounPlural} found`
+    const text = `Geo Study – ${config.label}\n${resultLine}\n⏱️ ${timeStr}`
     navigator.clipboard.writeText(text)
       .then(() => { setCopied(true); setTimeout(() => setCopied(false), 2500) })
       .catch(() => { window.prompt('Copy your results:', text) })
@@ -138,13 +141,18 @@ function Quiz({ config, onRestart, onStart }: QuizProps) {
     svg.selectAll('*').remove()
     svg.append('rect').attr('width', W).attr('height', H).attr('fill', '#0c1f35')
 
-    // Use rotate for longitude centering so antimeridian-crossing regions
+    // geoAlbersUsa composites Alaska/Hawaii into the contiguous frame; Mercator
+    // uses rotate for longitude centering so antimeridian-crossing regions
     // (e.g. Oceania: Samoa/Tonga at -172°/-175°) project correctly.
-    const proj = d3.geoMercator()
-      .rotate([-config.projCenter[0], 0])
-      .center([0, config.projCenter[1]])
-      .scale(config.projScale)
-      .translate([W / 2, H / 2])
+    const proj: d3.GeoProjection = config.projectionType === 'albersUsa'
+      ? d3.geoAlbersUsa()
+          .scale(config.projScale)
+          .translate([W / 2, H / 2])
+      : d3.geoMercator()
+          .rotate([-config.projCenter[0], 0])
+          .center([0, config.projCenter[1]])
+          .scale(config.projScale)
+          .translate([W / 2, H / 2])
 
     const geoPath = d3.geoPath().projection(proj)
     const zoomG = svg.append<SVGGElement>('g')
@@ -368,12 +376,14 @@ function Quiz({ config, onRestart, onStart }: QuizProps) {
 
     // ── Load TopoJSON ─────────────────────────────────────────────────────
     const idSet = new Set(config.countries.map(c => c.id))
+    const dataUrl = config.dataSource?.url ?? 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json'
+    const objectName = config.dataSource?.objectName ?? 'countries'
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    d3.json<any>('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json')
+    d3.json<any>(dataUrl)
       .then(world => {
         if (quizVersionRef.current !== myVersion || !world) return
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const features = (topojson.feature(world, world.objects.countries) as any).features as any[]
+        const features = (topojson.feature(world, world.objects[objectName]) as any).features as any[]
 
         // Main map paths
         const regionFeatures = features.filter(f => idSet.has(+f.id))
@@ -451,7 +461,8 @@ function Quiz({ config, onRestart, onStart }: QuizProps) {
       setInputStatus('wrong')
       setTimeout(() => setInputStatus(''), 400)
     } else {
-      setFeedback({ msg: `Not a ${config.regionLabel} country. Keep trying!`, color: '#f87171' })
+      const article = /^[aeiou]/i.test(config.regionLabel) ? 'an' : 'a'
+      setFeedback({ msg: `Not ${article} ${config.regionLabel} ${itemNoun}. Keep trying!`, color: '#f87171' })
       setInputStatus('wrong')
       setTimeout(() => setInputStatus(''), 400)
     }
@@ -468,7 +479,7 @@ function Quiz({ config, onRestart, onStart }: QuizProps) {
           <span className="quiz-score-num">{score}</span>
           <span className="quiz-score-sep"> / </span>
           <span className="quiz-score-den">{config.total}</span>
-          <span className="quiz-score-lbl">countries</span>
+          <span className="quiz-score-lbl">{itemNounPlural}</span>
         </div>
         <div className={`quiz-timer${timerWarning ? ' quiz-timer--warning' : ''}`}>
           {formatTime(timeLeft)}
@@ -497,7 +508,7 @@ function Quiz({ config, onRestart, onStart }: QuizProps) {
             ref={inputRef}
             className={`quiz-input ${inputStatus}`}
             type="text"
-            placeholder="Type a country name…"
+            placeholder={`Type a ${itemNoun} name…`}
             value={inputVal}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
