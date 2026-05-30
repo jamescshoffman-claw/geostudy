@@ -1529,3 +1529,455 @@ a { color: inherit; }
   .hs-row { padding: 10px 10px; gap: 4px; font-size: 0.82rem; }
   .hs-badge { padding: 2px 5px; font-size: 0.68rem; }
 }
+
+/* ================================================================
+   Travel Path (border-hopping game)
+   ================================================================ */
+
+.tp-page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 72px 24px 80px;
+}
+
+.tp-header { margin-bottom: 28px; }
+.tp-title {
+  font-size: clamp(30px, 6vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin: 0 0 10px;
+  line-height: 1;
+}
+.tp-title::after {
+  content: '';
+  display: block;
+  width: 38px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin-top: 12px;
+}
+.tp-subtitle {
+  color: var(--ink-2);
+  margin: 0;
+  max-width: 60ch;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* How to play */
+.tp-how {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+}
+.tp-how-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+.tp-how-list {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--ink-2);
+  line-height: 1.65;
+  font-size: 0.95rem;
+}
+.tp-how-list li { margin-bottom: 6px; }
+.tp-how-list li:last-child { margin-bottom: 0; }
+.tp-how-list strong { color: var(--ink); font-weight: 700; }
+
+/* Level cards */
+.tp-region-group { margin-bottom: 28px; }
+.tp-region-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.tp-region-count {
+  margin-left: auto;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-size: 0.78rem;
+}
+.tp-levels { display: flex; flex-direction: column; gap: 12px; }
+.tp-level {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  text-align: left;
+  padding: 18px 22px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.tp-level:hover {
+  border-color: var(--ink-3);
+  box-shadow: var(--shadow-tile-hover);
+  transform: translateY(-2px);
+}
+.tp-level-region {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  min-width: 92px;
+  flex-shrink: 0;
+}
+.tp-level-dot { width: 8px; height: 8px; border-radius: 50%; }
+.tp-level-diff {
+  flex-shrink: 0;
+  width: 52px;
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 0;
+  border-radius: 6px;
+  border: 1px solid transparent;
+}
+.tp-level-diff--easy {
+  color: #475569;
+  background: rgba(71, 85, 105, 0.1);
+  border-color: rgba(71, 85, 105, 0.2);
+}
+.tp-level-diff--hard {
+  color: #b91c1c;
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.28);
+}
+.tp-level-route {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.15rem;
+  color: var(--ink);
+  flex: 1;
+}
+.tp-level-route strong { font-weight: 700; letter-spacing: -0.01em; }
+.tp-level-arrow { color: var(--ink-3); font-weight: 400; }
+.tp-level-go {
+  color: var(--ink-3);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tp-level:hover .tp-level-go { color: var(--accent); }
+
+/* Completed marker — green message just left of the Play/Replay button. */
+.tp-level-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  color: #15803d;
+  background: rgba(22, 163, 74, 0.1);
+  border: 1px solid rgba(22, 163, 74, 0.28);
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tp-level-done + .tp-level-go { margin-left: 0; }
+.tp-level--done { border-color: rgba(22, 163, 74, 0.4); }
+.tp-level--done .tp-level-route strong { color: #14532d; }
+
+/* Date chip on archive past-daily cards */
+.tp-level-date {
+  flex-shrink: 0;
+  width: 116px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.tp-archive-empty {
+  color: var(--ink-3);
+  font-size: 0.95rem;
+  margin: 0;
+  padding: 4px 2px 8px;
+}
+
+/* Loading placeholder before the daily challenge mounts */
+.tp-loading-block {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--ink-3);
+  font-size: 1rem;
+}
+
+/* Game view */
+.tp-game { display: flex; flex-direction: column; }
+
+/* Daily date label in the route banner */
+.tp-daily-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+/* "Come back tomorrow" / back-to-archive note under the game */
+.tp-daily-note {
+  margin: 14px 0 0;
+  font-size: 0.92rem;
+  color: var(--ink-2);
+}
+.tp-link {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+.tp-link:hover { text-decoration: underline; }
+
+.tp-route-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.tp-levels-back {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.tp-levels-back:hover { background: var(--bg-2); border-color: var(--ink-3); color: var(--ink); }
+.tp-route-ends {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.tp-route-arrow { color: var(--ink-3); }
+.tp-end--start { color: #2563eb; }
+.tp-end--dest { color: var(--accent); }
+.tp-route-meta { display: flex; gap: 10px; margin-left: auto; }
+.tp-stat {
+  font-size: 0.85rem;
+  color: var(--ink-2);
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-variant-numeric: tabular-nums;
+}
+.tp-stat strong { color: var(--ink); }
+.tp-stat--muted { color: var(--ink-3); }
+
+/* Route chain */
+.tp-chain {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 14px;
+  min-height: 34px;
+}
+.tp-chain-wrap { display: inline-flex; align-items: center; gap: 4px; }
+.tp-chain-sep { color: var(--ink-3); font-size: 0.9rem; }
+.tp-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 13px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  white-space: nowrap;
+}
+.tp-chip--start { background: #dbeafe; border-color: #93c5fd; color: #1d4ed8; }
+.tp-chip--dest { background: #f7e2d8; border-color: var(--accent); color: #9a3d1f; }
+.tp-chip--current {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22,163,74,0.18);
+}
+
+/* Input row */
+.tp-input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.tp-input {
+  flex: 1;
+  padding: 12px 18px;
+  font-size: 1.05rem;
+  font-family: var(--font-sans);
+  border-radius: 10px;
+  border: 2px solid var(--line);
+  background: var(--bg-2);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.tp-input::placeholder { color: var(--ink-3); }
+.tp-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(197,97,63,0.18); }
+
+.tp-btn {
+  padding: 11px 18px;
+  font-size: 0.9rem;
+  font-family: var(--font-sans);
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.tp-btn:disabled { opacity: 0.5; cursor: default; }
+.tp-btn-undo {
+  border: 2px solid var(--line);
+  background: transparent;
+  color: var(--ink-2);
+}
+.tp-btn-undo:not(:disabled):hover { border-color: var(--ink-3); background: var(--bg-2); }
+
+.tp-feedback {
+  height: 20px;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.tp-win {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #14532d, #166534);
+  border-radius: 10px;
+  color: #d1fae5;
+  font-size: 1.02rem;
+  margin-bottom: 12px;
+}
+.tp-win strong { color: #fff; font-size: 1.15rem; }
+.tp-win--gaveup {
+  background: var(--bg-2);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+}
+
+/* Map */
+.tp-map-wrap {
+  position: relative;
+  background: #0c1f35;
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 0 4px 28px rgba(0,0,0,0.18);
+  margin-bottom: 16px;
+}
+.tp-map-wrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+  touch-action: none;       /* let d3.zoom handle pinch gestures */
+  cursor: grab;
+}
+.tp-map-wrap svg:active { cursor: grabbing; }
+.tp-map-hint {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.3);
+  pointer-events: none;
+  z-index: 1;
+}
+.tp-map-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  font-weight: 500;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tp-c {
+  fill: #22364d;
+  stroke: #0c1f35;
+  stroke-width: 0.5;
+  transition: fill 0.35s ease;
+}
+.tp-c-start { fill: #2563eb; }
+.tp-c-dest { fill: var(--accent); }
+.tp-c-path { fill: #16a34a; }
+.tp-c-reached { fill: #22c55e; }
+
+/* Controls */
+.tp-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+.tp-btn-reset {
+  border: 2px solid rgba(37,99,235,0.4);
+  background: transparent;
+  color: #2563eb;
+}
+.tp-btn-reset:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+.tp-btn-giveup {
+  border: 2px solid var(--line);
+  background: transparent;
+  color: var(--ink-3);
+}
+.tp-btn-giveup:hover { border-color: var(--ink-3); color: var(--ink); background: var(--bg-2); }
+.tp-btn-share {
+  border: none;
+  background: #16a34a;
+  color: #fff;
+  flex: 1;
+  min-width: 160px;
+}
+.tp-btn-share:hover { background: #15803d; }
+.tp-btn-share--copied { background: #166534; }
+
+@media (max-width: 720px) {
+  .tp-page { padding: 24px 16px 64px; }
+  .tp-level { gap: 12px; padding: 14px 16px; flex-wrap: wrap; }
+  .tp-level-route { font-size: 1.02rem; }
+  .tp-route-ends { font-size: 1.1rem; }
+  .tp-route-meta { margin-left: 0; width: 100%; }
+}
