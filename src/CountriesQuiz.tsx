@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import * as d3 from 'd3'
 import * as topojson from 'topojson-client'
 import { CONFIGS, type QuizConfig, type Country, type RegionKey } from './quizData'
+import { saveScore } from './scores'
 
 // ── AdSense ───────────────────────────────────────────────────────────────
 // Loader is in index.html. Replace the slot IDs below with the ones AdSense
@@ -55,11 +56,12 @@ const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padSta
 
 interface QuizProps {
   config: QuizConfig
+  quizKey: string
   onRestart: () => void
   onStart?: () => void
 }
 
-function Quiz({ config, onRestart, onStart }: QuizProps) {
+function Quiz({ config, quizKey, onRestart, onStart }: QuizProps) {
   const [score, setScore] = useState(0)
   const [foundNames, setFoundNames] = useState<string[]>([])
   const [missedNames, setMissedNames] = useState<string[]>([])
@@ -95,6 +97,21 @@ function Quiz({ config, onRestart, onStart }: QuizProps) {
     if (timeLeft === 0 && started && !gameOverRef.current) giveUpRef.current()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, started])
+
+  // Persist the result once per finished game (saveScore no-ops when signed out).
+  const savedRef = useRef(false)
+  useEffect(() => {
+    if (!gameOver || savedRef.current) return
+    savedRef.current = true
+    saveScore({
+      quizKey,
+      score,
+      total: config.total,
+      won,
+      elapsedSeconds: TIMER_SECONDS - timeLeft,
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameOver])
 
   // ── Share ─────────────────────────────────────────────────────────────────
 
@@ -634,6 +651,7 @@ export default function CountriesQuiz() {
         <Quiz
           key={`${tab}-${resetCount}`}
           config={CONFIGS[tab]}
+          quizKey={tab}
           onRestart={() => setResetCount(c => c + 1)}
           onStart={() => setAdsReady(true)}
         />
