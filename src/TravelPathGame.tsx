@@ -468,12 +468,16 @@ export default function TravelPath({ mode, onNavigate }: TravelPathProps) {
       flash(`${displayName(ds, id)} doesn't border ${displayName(ds, last)}.`, '#f87171')
       return
     }
-    const next = [...path, id]
+    // If the guessed country borders the destination, auto-complete the final
+    // hop — the player shouldn't have to type the last country once they've
+    // reached an adjacent one.
+    const reachesDest = id !== challenge.dest && !!adj?.get(id)?.has(challenge.dest)
+    const next = reachesDest ? [...path, id, challenge.dest] : [...path, id]
     setPath(next)
     setInput('')
-    if (id === challenge.dest) {
+    if (id === challenge.dest || reachesDest) {
       setWon(true)
-      flash(`You made it to ${displayName(ds, id)}! 🎉`, '#4ade80')
+      flash(`You made it to ${displayName(ds, challenge.dest)}! 🎉`, '#4ade80')
       const stepsNow = next.length - 1
       saveCompletion(challenge.key, stepsNow)
       setCompletions(prev => ({
