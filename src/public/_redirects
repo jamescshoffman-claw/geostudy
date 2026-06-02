@@ -1,0 +1,4 @@
+# Cloudflare Pages SPA fallback: serve the app for client-side routes
+# (/travelpath, /archive, …). Real 200 rewrite — replaces the 404.html hack.
+# (GitHub Pages ignores this file, so it's safe to keep during the migration.)
+/*    /index.html    200

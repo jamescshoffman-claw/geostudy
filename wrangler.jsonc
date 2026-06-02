@@ -1,0 +1,12 @@
+{
+  // Static-assets Worker: serves the built SPA from ./dist. Declaring this
+  // config explicitly makes `wrangler deploy` skip framework auto-detection
+  // (which otherwise demands Vite >= 6). Backend API routes can be added later
+  // via a "main" Worker script alongside these assets.
+  "name": "geostudy",
+  "compatibility_date": "2026-06-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
