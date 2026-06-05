@@ -545,9 +545,17 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
             </button>
           )}
           {gameOver && (
-            <button className="quiz-btn quiz-btn-restart" onClick={onRestart}>
-              Restart
-            </button>
+            <>
+              <button className="quiz-btn quiz-btn-back" onClick={onRestart}>
+                ← Back
+              </button>
+              <button
+                className={`quiz-btn quiz-btn-share-inline${copied ? ' is-copied' : ''}`}
+                onClick={handleShare}
+              >
+                {copied ? '✓ Copied!' : '📋 Share results'}
+              </button>
+            </>
           )}
         </div>
       )}
@@ -557,15 +565,6 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
       </div>
 
       {won && <div className="quiz-win-banner">{config.winMsg}</div>}
-
-      {gameOver && (
-        <button
-          className={`quiz-btn-share${copied ? ' quiz-btn-share--copied' : ''}`}
-          onClick={handleShare}
-        >
-          {copied ? '✓ Copied to clipboard!' : '📋 Share my results'}
-        </button>
-      )}
 
       {/* Maps */}
       <div className="quiz-maps-area">
@@ -617,6 +616,12 @@ export default function CountriesQuiz() {
       document.title = 'James'
     }
   }, [])
+
+  // While a game is in progress, lock page scroll and hide below-the-fold chrome.
+  useEffect(() => {
+    document.body.classList.toggle('quiz-playing', playing)
+    return () => document.body.classList.remove('quiz-playing')
+  }, [playing])
 
   const switchTab = (r: RegionKey) => {
     setTab(r)

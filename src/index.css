@@ -443,6 +443,11 @@ a { color: inherit; }
 .quiz-page--playing .quiz-header,
 .quiz-page--playing .quiz-tabs { display: none; }
 
+/* ...and hide the below-the-fold ad + about, and lock page scroll. */
+body.quiz-playing { overflow: hidden; }
+body.quiz-playing .quiz-ad-undermap,
+body.quiz-playing .quiz-about { display: none; }
+
 /* Side ad rail flanking the 960px quiz; only where there's room beside it */
 .quiz-ad-rail { display: none; }
 
@@ -693,6 +698,19 @@ a { color: inherit; }
   border-radius: 10px;
 }
 .quiz-btn-start:hover { background: #15803d; border-color: #15803d; }
+.quiz-btn-back {
+  border: 2px solid var(--line);
+  background: transparent;
+  color: var(--ink-2);
+}
+.quiz-btn-back:hover { background: var(--bg-2); color: var(--ink); }
+.quiz-btn-share-inline {
+  border: 2px solid #16a34a;
+  background: #16a34a;
+  color: #fff;
+}
+.quiz-btn-share-inline:hover { background: #15803d; border-color: #15803d; }
+.quiz-btn-share-inline.is-copied { background: #166534; border-color: #166534; }
 
 .quiz-feedback {
   text-align: center;
