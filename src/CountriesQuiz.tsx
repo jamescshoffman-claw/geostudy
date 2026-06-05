@@ -77,11 +77,12 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
   const [timeLeft, setTimeLeft] = useState(timerSeconds)
   const [copied, setCopied] = useState(false)
 
-  // Tell the parent when a game is actively in progress (started, not yet over)
-  // so it can switch into a distraction-free, map-only layout.
+  // Tell the parent when we're in a game session — from hitting Start until the
+  // quiz is remounted by Back/restart (started resets). Stays on through the
+  // game-over results screen so the rest of the site stays hidden until Back.
   useEffect(() => {
-    onPlayingChange?.(started && !gameOver)
-  }, [started, gameOver, onPlayingChange])
+    onPlayingChange?.(started)
+  }, [started, onPlayingChange])
 
   const svgRef   = useRef<SVGSVGElement>(null)
   const insetRef = useRef<SVGSVGElement>(null)
