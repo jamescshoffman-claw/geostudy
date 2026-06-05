@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import * as d3 from 'd3'
 import * as topojson from 'topojson-client'
 import { CONFIGS, type QuizConfig, type Country, type RegionKey } from './quizData'
@@ -60,9 +60,10 @@ interface QuizProps {
   config: QuizConfig
   quizKey: string
   onRestart: () => void
+  onPlayingChange?: (playing: boolean) => void
 }
 
-function Quiz({ config, quizKey, onRestart }: QuizProps) {
+function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
   const [score, setScore] = useState(0)
   const [foundNames, setFoundNames] = useState<string[]>([])
   const [missedNames, setMissedNames] = useState<string[]>([])
@@ -74,6 +75,12 @@ function Quiz({ config, quizKey, onRestart }: QuizProps) {
   const [started, setStarted] = useState(false)
   const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS)
   const [copied, setCopied] = useState(false)
+
+  // Tell the parent when a game is actively in progress (started, not yet over)
+  // so it can switch into a distraction-free, map-only layout.
+  useEffect(() => {
+    onPlayingChange?.(started && !gameOver)
+  }, [started, gameOver, onPlayingChange])
 
   const svgRef   = useRef<SVGSVGElement>(null)
   const insetRef = useRef<SVGSVGElement>(null)
@@ -607,6 +614,8 @@ function Quiz({ config, quizKey, onRestart }: QuizProps) {
 export default function CountriesQuiz() {
   const [tab, setTab] = useState<RegionKey>('europe')
   const [resetCount, setResetCount] = useState(0)
+  const [playing, setPlaying] = useState(false)
+  const handlePlayingChange = useCallback((p: boolean) => setPlaying(p), [])
 
   useEffect(() => {
     document.title = 'Geo Study: Countries Quiz'
@@ -627,7 +636,7 @@ export default function CountriesQuiz() {
         <AdsterraBanner adKey={SIDE_AD.key} width={SIDE_AD.w} height={SIDE_AD.h} />
       </aside>
 
-      <div className="quiz-page">
+      <div className={`quiz-page${playing ? ' quiz-page--playing' : ''}`}>
         <div className="quiz-header">
           <h1 className="quiz-title">Countries Quiz</h1>
           <p className="quiz-subtitle">
@@ -653,6 +662,7 @@ export default function CountriesQuiz() {
           config={CONFIGS[tab]}
           quizKey={tab}
           onRestart={() => setResetCount(c => c + 1)}
+          onPlayingChange={handlePlayingChange}
         />
       </div>
 

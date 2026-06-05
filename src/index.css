@@ -438,6 +438,11 @@ a { color: inherit; }
   padding: 20px 24px 16px;
 }
 
+/* Focus mode: while a quiz is in progress, hide the title and region tabs so
+   the map (flex:1) expands to fill the whole pane. */
+.quiz-page--playing .quiz-header,
+.quiz-page--playing .quiz-tabs { display: none; }
+
 /* Side ad rail flanking the 960px quiz; only where there's room beside it */
 .quiz-ad-rail { display: none; }
 
