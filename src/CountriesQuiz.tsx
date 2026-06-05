@@ -5,23 +5,32 @@ import { CONFIGS, type QuizConfig, type Country, type RegionKey } from './quizDa
 import { saveScore } from './scores'
 
 // ── Adsterra banner ─────────────────────────────────────────────────────────
-// The ad network's snippet is a global `atOptions` config plus an invoke.js
-// loader that injects the iframe where the script lives. JSX <script> tags don't
-// execute, so we append both scripts into a container div via a ref instead.
+// The snippet is a global `atOptions` config plus invoke.js, which locates
+// itself via document.currentScript and injects the ad next to its own <script>.
+// currentScript is null for dynamically-appended async scripts, so loading it
+// straight into the page silently fails. Running it inside a srcdoc iframe makes
+// the scripts parse synchronously (currentScript works) and sandboxes the ad.
+const AD_KEY = '201d3c619c25505fcf1ea81b9150f6c9'
+const AD_W = 160
+const AD_H = 300
+
 function AdsterraBanner() {
-  const ref = useRef<HTMLDivElement>(null)
-  const injected = useRef(false)
-  useEffect(() => {
-    if (injected.current || !ref.current) return
-    injected.current = true
-    const conf = document.createElement('script')
-    conf.text = "atOptions = { 'key':'201d3c619c25505fcf1ea81b9150f6c9','format':'iframe','height':300,'width':160,'params':{} };"
-    const invoke = document.createElement('script')
-    invoke.src = 'https://www.highperformanceformat.com/201d3c619c25505fcf1ea81b9150f6c9/invoke.js'
-    ref.current.appendChild(conf)
-    ref.current.appendChild(invoke)
-  }, [])
-  return <div ref={ref} className="quiz-ad-banner" style={{ width: 160, height: 300 }} />
+  const srcDoc =
+    `<!doctype html><html><head><meta charset="utf-8">` +
+    `<style>html,body{margin:0;padding:0;overflow:hidden}</style></head><body>` +
+    `<script type="text/javascript">atOptions={'key':'${AD_KEY}','format':'iframe','height':${AD_H},'width':${AD_W},'params':{}};<\/script>` +
+    `<script type="text/javascript" src="https://www.highperformanceformat.com/${AD_KEY}/invoke.js"><\/script>` +
+    `</body></html>`
+  return (
+    <iframe
+      title="advertisement"
+      width={AD_W}
+      height={AD_H}
+      scrolling="no"
+      style={{ border: 0, width: AD_W, height: AD_H, display: 'block', overflow: 'hidden' }}
+      srcDoc={srcDoc}
+    />
+  )
 }
 
 // Kosovo is absent from world-atlas (merged into Serbia there); embed its polygon directly.
