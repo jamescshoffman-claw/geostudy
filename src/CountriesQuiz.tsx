@@ -11,6 +11,7 @@ import { saveScore } from './scores'
 // straight into the page silently fails. Running it inside a srcdoc iframe makes
 // the scripts parse synchronously (currentScript works) and sandboxes the ad.
 const SIDE_AD   = { key: '201d3c619c25505fcf1ea81b9150f6c9', w: 160, h: 300 }
+const RIGHT_AD  = { key: '36c5282cc5fe4e223d8fc97663f14399', w: 160, h: 600 }
 const BOTTOM_AD = { key: 'bb87690ee29676a7e144009afced991a', w: 728, h: 90 }
 
 function AdsterraBanner({ adKey, width, height }: { adKey: string; width: number; height: number }) {
@@ -631,9 +632,12 @@ export default function CountriesQuiz() {
 
   return (
     <>
-      {/* Ad banner beside the map (wide viewports only) */}
+      {/* Ad banners flanking the map (wide viewports only) */}
       <aside className="quiz-ad-rail quiz-ad-rail--left" aria-hidden="true">
         <AdsterraBanner adKey={SIDE_AD.key} width={SIDE_AD.w} height={SIDE_AD.h} />
+      </aside>
+      <aside className="quiz-ad-rail quiz-ad-rail--right" aria-hidden="true">
+        <AdsterraBanner adKey={RIGHT_AD.key} width={RIGHT_AD.w} height={RIGHT_AD.h} />
       </aside>
 
       <div className={`quiz-page${playing ? ' quiz-page--playing' : ''}`}>
