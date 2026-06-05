@@ -61,7 +61,7 @@ const itemNoun = (ds: DatasetKey) => (ds === 'us' ? 'state' : 'country')
 // Each is 4–5 land borders apart (verified against the world-atlas border
 // graph). Players may take longer routes; any valid chain of bordering
 // countries counts.
-type Difficulty = 'easy' | 'hard'
+type Difficulty = 'easy' | 'hard' | 'evil'
 
 interface Challenge {
   key: string
@@ -157,6 +157,11 @@ const CHALLENGES: Challenge[] = [
   { key: 'us-texas-montana',   region: 'USA', ds: 'us', archiveOnly: true, start: 48, dest: 30, bounds: [[-118, 23], [-91, 51]] }, // Texas → Montana (4)
   { key: 'us-idaho-texas',     region: 'USA', ds: 'us', archiveOnly: true, start: 16, dest: 48, bounds: [[-120, 23], [-91, 51]] }, // Idaho → Texas (4)
   { key: 'us-newyork-illinois', region: 'USA', ds: 'us', archiveOnly: true, start: 36, dest: 17, bounds: [[-94, 34], [-70, 47]] }, // New York → Illinois (4)
+
+  // ── Evil (archive-only; span Europe → Asia, ~10 borders) ──
+  { key: 'portugal-pakistan',    region: 'Eurasia', archiveOnly: true, difficulty: 'evil', start: 620, dest: 586, bounds: [[-14, 12], [80, 58]] }, // Portugal → Pakistan (~10)
+  { key: 'spain-india',          region: 'Eurasia', archiveOnly: true, difficulty: 'evil', start: 724, dest: 356, bounds: [[-13, 6],  [98, 56]] }, // Spain → India (~10)
+  { key: 'portugal-afghanistan', region: 'Eurasia', archiveOnly: true, difficulty: 'evil', start: 620, dest: 4,   bounds: [[-14, 12], [76, 58]] }, // Portugal → Afghanistan (~10)
 ]
 
 // ── Daily selection (deterministic from the local calendar date — no server) ──
@@ -164,8 +169,11 @@ const CHALLENGES: Challenge[] = [
 // cycles so every day is a different map. Bonus challenges are excluded.
 const EASY_POOL = CHALLENGES.filter(c => !c.archiveOnly && (c.difficulty ?? 'easy') === 'easy')
 const HARD_POOL = CHALLENGES.filter(c => !c.archiveOnly && c.difficulty === 'hard')
-const BONUS_POOL = CHALLENGES.filter(c => c.archiveOnly)
+const EVIL_POOL = CHALLENGES.filter(c => c.archiveOnly && c.difficulty === 'evil')
+const BONUS_POOL = CHALLENGES.filter(c => c.archiveOnly && c.difficulty !== 'evil')
 const BY_KEY = new Map(CHALLENGES.map(c => [c.key, c]))
+
+const diffLabel = (d: Difficulty) => (d === 'evil' ? 'Evil' : d === 'hard' ? 'Hard' : 'Easy')
 
 // Launch day = daily #0. The archive of *past* dailies grows one per day from here.
 const DAILY_EPOCH = new Date(2026, 4, 30) // 30 May 2026 (local time)
@@ -525,7 +533,7 @@ export default function TravelPath({ mode, onNavigate }: TravelPathProps) {
         onClick={() => selectChallenge(ch)}
       >
         {dateLabel && <span className="tp-level-date">{dateLabel}</span>}
-        <span className={`tp-level-diff tp-level-diff--${diff}`}>{diff === 'hard' ? 'Hard' : 'Easy'}</span>
+        <span className={`tp-level-diff tp-level-diff--${diff}`}>{diffLabel(diff)}</span>
         <span className="tp-level-route">
           <strong>{displayName(ch.ds ?? 'world', ch.start)}</strong>
           <span className="tp-level-arrow">→</span>
@@ -543,7 +551,7 @@ export default function TravelPath({ mode, onNavigate }: TravelPathProps) {
   const diff = challenge ? (challenge.difficulty ?? 'easy') : 'easy'
 
   return (
-    <div className="tp-page">
+    <div className={`tp-page${challenge ? ' tp-page--game' : ''}`}>
       <div className="tp-header">
         <h1 className="tp-title">{mode === 'archive' ? 'Travel Path Archive' : 'Travel Path'}</h1>
         <p className="tp-subtitle">
@@ -588,6 +596,14 @@ export default function TravelPath({ mode, onNavigate }: TravelPathProps) {
             </div>
             <div className="tp-levels">{BONUS_POOL.map(ch => renderCard(ch))}</div>
           </div>
+
+          <div className="tp-region-group">
+            <div className="tp-region-head">
+              Evil challenges
+              <span className="tp-region-count">{EVIL_POOL.length} maps · Europe → Asia, ~10 borders</span>
+            </div>
+            <div className="tp-levels">{EVIL_POOL.map(ch => renderCard(ch))}</div>
+          </div>
         </>
       )}
 
@@ -597,7 +613,7 @@ export default function TravelPath({ mode, onNavigate }: TravelPathProps) {
             {mode === 'archive'
               ? <button className="tp-levels-back" onClick={clearActive}>← Archive</button>
               : <span className="tp-daily-label">🗓 {fmtDate(today)}</span>}
-            <span className={`tp-level-diff tp-level-diff--${diff}`}>{diff === 'hard' ? 'Hard' : 'Easy'}</span>
+            <span className={`tp-level-diff tp-level-diff--${diff}`}>{diffLabel(diff)}</span>
             <div className="tp-route-ends">
               <span className="tp-end tp-end--start">{displayName(ds, challenge.start)}</span>
               <span className="tp-route-arrow">→</span>

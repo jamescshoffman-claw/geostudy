@@ -1554,6 +1554,21 @@ body.quiz-playing .quiz-about { display: none; }
   padding: 72px 24px 80px;
 }
 
+/* While a challenge is active, the whole game lives on one non-scrolling page:
+   a viewport-tall flex column whose map fills the leftover space. */
+.tp-page.tp-page--game {
+  max-width: 1000px;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 56px 24px 14px; /* top clears the fixed nav bar */
+}
+.tp-page.tp-page--game .tp-header { display: none; }
+.tp-page.tp-page--game .tp-game { flex: 1; min-height: 0; }
+.tp-page.tp-page--game .tp-map-wrap { flex: 1; min-height: 0; margin-bottom: 12px; }
+.tp-page.tp-page--game .tp-map-wrap svg { height: 100%; }
+
 .tp-header { margin-bottom: 28px; }
 .tp-title {
   font-size: clamp(30px, 6vw, 52px);
@@ -1681,6 +1696,11 @@ body.quiz-playing .quiz-about { display: none; }
   color: #b91c1c;
   background: rgba(220, 38, 38, 0.1);
   border-color: rgba(220, 38, 38, 0.28);
+}
+.tp-level-diff--evil {
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.12);
+  border-color: rgba(124, 58, 237, 0.34);
 }
 .tp-level-route {
   display: flex;
@@ -1990,6 +2010,8 @@ body.quiz-playing .quiz-about { display: none; }
 
 @media (max-width: 720px) {
   .tp-page { padding: 24px 16px 64px; }
+  /* Top bar is in-flow here (52px), so the one-page game fills the rest. */
+  .tp-page.tp-page--game { height: calc(100dvh - 52px); padding: 10px 16px; }
   .tp-level { gap: 12px; padding: 14px 16px; flex-wrap: wrap; }
   .tp-level-route { font-size: 1.02rem; }
   .tp-route-ends { font-size: 1.1rem; }
