@@ -581,11 +581,6 @@ function Quiz({ config, quizKey, onRestart }: QuizProps) {
         )}
       </div>
 
-      {/* Leaderboard directly under the map, in normal flow */}
-      <div className="quiz-ad-undermap" aria-hidden="true">
-        <AdsterraBanner adKey={BOTTOM_AD.key} width={BOTTOM_AD.w} height={BOTTOM_AD.h} />
-      </div>
-
       {/* Found / missed tags (hidden in fixed layout) */}
       {foundNames.length > 0 && (
         <div className="quiz-tags-section">
@@ -659,6 +654,11 @@ export default function CountriesQuiz() {
           quizKey={tab}
           onRestart={() => setResetCount(c => c + 1)}
         />
+      </div>
+
+      {/* Leaderboard below the full-height quiz pane (doesn't shrink the map) */}
+      <div className="quiz-ad-undermap" aria-hidden="true">
+        <AdsterraBanner adKey={BOTTOM_AD.key} width={BOTTOM_AD.w} height={BOTTOM_AD.h} />
       </div>
 
       <section className="quiz-about">
