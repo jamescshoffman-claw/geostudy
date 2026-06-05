@@ -21,7 +21,7 @@ function AdsterraBanner() {
     ref.current.appendChild(conf)
     ref.current.appendChild(invoke)
   }, [])
-  return <div ref={ref} className="quiz-ad-banner" style={{ width: 160, height: 300, margin: '16px auto' }} />
+  return <div ref={ref} className="quiz-ad-banner" style={{ width: 160, height: 300 }} />
 }
 
 // Kosovo is absent from world-atlas (merged into Serbia there); embed its polygon directly.
@@ -573,9 +573,6 @@ function Quiz({ config, quizKey, onRestart }: QuizProps) {
         )}
       </div>
 
-      {/* Ad banner below the map */}
-      <AdsterraBanner />
-
       {/* Found / missed tags (hidden in fixed layout) */}
       {foundNames.length > 0 && (
         <div className="quiz-tags-section">
@@ -617,6 +614,14 @@ export default function CountriesQuiz() {
 
   return (
     <>
+      {/* Ad banners flanking the map (wide viewports only) */}
+      <aside className="quiz-ad-rail quiz-ad-rail--left" aria-hidden="true">
+        <AdsterraBanner />
+      </aside>
+      <aside className="quiz-ad-rail quiz-ad-rail--right" aria-hidden="true">
+        <AdsterraBanner />
+      </aside>
+
       <div className="quiz-page">
         <div className="quiz-header">
           <h1 className="quiz-title">Countries Quiz</h1>

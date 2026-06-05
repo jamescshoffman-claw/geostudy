@@ -438,6 +438,23 @@ a { color: inherit; }
   padding: 20px 24px 16px;
 }
 
+/* Ad rails flanking the 960px quiz; only on viewports wide enough to fit them */
+.quiz-ad-rail { display: none; }
+
+@media (min-width: 1320px) {
+  .quiz-ad-rail {
+    display: block;
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 160px;
+    height: 300px;
+    z-index: 1;
+  }
+  .quiz-ad-rail--left  { left:  calc(50% - 480px - 20px - 160px); }
+  .quiz-ad-rail--right { right: calc(50% - 480px - 20px - 160px); }
+}
+
 .quiz-subtitle {
   font-size: 0.95rem;
   color: var(--ink-2);
