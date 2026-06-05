@@ -4,32 +4,6 @@ import * as topojson from 'topojson-client'
 import { CONFIGS, type QuizConfig, type Country, type RegionKey } from './quizData'
 import { saveScore } from './scores'
 
-// ── AdSense ───────────────────────────────────────────────────────────────
-// Loader is in index.html. Replace the slot IDs below with the ones AdSense
-// gives you when you create the two ad units in the dashboard.
-const AD_CLIENT = 'ca-pub-7665194311315691'
-const AD_SLOT_LEFT = '4001990616'
-
-function AdSlot({ slot, className }: { slot: string; className?: string }) {
-  const pushed = useRef(false)
-  useEffect(() => {
-    if (pushed.current) return
-    pushed.current = true
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({})
-    } catch { /* adsbygoogle not ready */ }
-  }, [])
-  return (
-    <ins
-      className={`adsbygoogle ${className ?? ''}`}
-      style={{ display: 'block', width: '160px', height: '600px' }}
-      data-ad-client={AD_CLIENT}
-      data-ad-slot={slot}
-    />
-  )
-}
-
 // Kosovo is absent from world-atlas (merged into Serbia there); embed its polygon directly.
 const KOSOVO_FEATURE = {
   type: 'Feature',
@@ -58,10 +32,9 @@ interface QuizProps {
   config: QuizConfig
   quizKey: string
   onRestart: () => void
-  onStart?: () => void
 }
 
-function Quiz({ config, quizKey, onRestart, onStart }: QuizProps) {
+function Quiz({ config, quizKey, onRestart }: QuizProps) {
   const [score, setScore] = useState(0)
   const [foundNames, setFoundNames] = useState<string[]>([])
   const [missedNames, setMissedNames] = useState<string[]>([])
@@ -514,7 +487,7 @@ function Quiz({ config, quizKey, onRestart, onStart }: QuizProps) {
         <div className="quiz-start-row">
           <button
             className="quiz-btn quiz-btn-start"
-            onClick={() => { setStarted(true); onStart?.(); setTimeout(() => inputRef.current?.focus(), 50) }}
+            onClick={() => { setStarted(true); setTimeout(() => inputRef.current?.focus(), 50) }}
           >
             Start Quiz
           </button>
@@ -606,7 +579,6 @@ function Quiz({ config, quizKey, onRestart, onStart }: QuizProps) {
 export default function CountriesQuiz() {
   const [tab, setTab] = useState<RegionKey>('europe')
   const [resetCount, setResetCount] = useState(0)
-  const [adsReady, setAdsReady] = useState(false)
 
   useEffect(() => {
     document.title = 'Geo Study: Countries Quiz'
@@ -622,11 +594,6 @@ export default function CountriesQuiz() {
 
   return (
     <>
-      {adsReady && (
-        <aside className="quiz-ad-rail quiz-ad-rail--left" aria-hidden="true">
-          <AdSlot slot={AD_SLOT_LEFT} />
-        </aside>
-      )}
       <div className="quiz-page">
         <div className="quiz-header">
           <h1 className="quiz-title">Countries Quiz</h1>
@@ -653,7 +620,6 @@ export default function CountriesQuiz() {
           config={CONFIGS[tab]}
           quizKey={tab}
           onRestart={() => setResetCount(c => c + 1)}
-          onStart={() => setAdsReady(true)}
         />
       </div>
 
