@@ -285,10 +285,20 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
     })
 
     // ── Helpers ───────────────────────────────────────────────────────────
+    // Fly a freshly-placed label in from just off the top edge and let it land
+    // on its country with a small overshoot. `y` is the label's final y.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function dropIn(sel: any, y: number) {
+      sel.attr('transform', `translate(0,${-(y + 40)})`)
+        .transition().duration(500).ease(d3.easeBackOut)
+        .attr('transform', 'translate(0,0)')
+    }
+
     function addMapLabel(
       country: Country,
       group: d3.Selection<SVGGElement, unknown, null, undefined>,
       color: string,
+      animate = false,
     ) {
       if (smallIds.has(country.id)) {
         const sc = config.smallDef.find(s => s.id === country.id)
@@ -297,7 +307,7 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
         const g = d3.select<SVGGElement, unknown>(`#callout-${safeId(country.id)}`)
         g.select('line').attr('stroke', color)
         g.select('circle').attr('fill', color)
-        g.append('text')
+        const t = g.append('text')
           .attr('x', px + sc.dx).attr('y', py + sc.dy)
           .attr('text-anchor', sc.dx > 0 ? 'start' : 'end')
           .attr('dominant-baseline', 'middle')
@@ -308,6 +318,7 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
           .style('paint-order', 'stroke fill')
           .attr('pointer-events', 'none')
           .text(country.name)
+        if (animate) dropIn(t, py + sc.dy)
       } else {
         const feature = featureMap.get(country.id)
         if (!feature) return
@@ -319,7 +330,7 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
           ;[cx, cy] = geoPath.centroid(feature as any)
         }
         if (isNaN(cx) || isNaN(cy) || cx < 0 || cx > W || cy < 0 || cy > H) return
-        group.append('text')
+        const t = group.append('text')
           .attr('x', cx).attr('y', cy)
           .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
           .attr('font-size', '8px').attr('font-weight', 'bold')
@@ -329,6 +340,7 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
           .attr('stroke', 'rgba(0,0,0,0.75)').attr('stroke-width', '2.5')
           .style('paint-order', 'stroke fill')
           .text(country.name)
+        if (animate) dropIn(t, cy)
       }
     }
 
@@ -356,7 +368,7 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
           .attr('pointer-events', 'none')
           .text(country.name)
       }
-      addMapLabel(country, foundLabelsG, '#4ade80')
+      addMapLabel(country, foundLabelsG, '#4ade80', true)
       setScore(n)
       setFoundNames(prev => [...prev, country.name].sort((a, b) => a.localeCompare(b)))
       showFeedback(`✓ ${country.name}!`, '#4ade80')
