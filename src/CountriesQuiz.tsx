@@ -4,6 +4,26 @@ import * as topojson from 'topojson-client'
 import { CONFIGS, type QuizConfig, type Country, type RegionKey } from './quizData'
 import { saveScore } from './scores'
 
+// ── Adsterra banner ─────────────────────────────────────────────────────────
+// The ad network's snippet is a global `atOptions` config plus an invoke.js
+// loader that injects the iframe where the script lives. JSX <script> tags don't
+// execute, so we append both scripts into a container div via a ref instead.
+function AdsterraBanner() {
+  const ref = useRef<HTMLDivElement>(null)
+  const injected = useRef(false)
+  useEffect(() => {
+    if (injected.current || !ref.current) return
+    injected.current = true
+    const conf = document.createElement('script')
+    conf.text = "atOptions = { 'key':'201d3c619c25505fcf1ea81b9150f6c9','format':'iframe','height':300,'width':160,'params':{} };"
+    const invoke = document.createElement('script')
+    invoke.src = 'https://www.highperformanceformat.com/201d3c619c25505fcf1ea81b9150f6c9/invoke.js'
+    ref.current.appendChild(conf)
+    ref.current.appendChild(invoke)
+  }, [])
+  return <div ref={ref} className="quiz-ad-banner" style={{ width: 160, height: 300, margin: '16px auto' }} />
+}
+
 // Kosovo is absent from world-atlas (merged into Serbia there); embed its polygon directly.
 const KOSOVO_FEATURE = {
   type: 'Feature',
@@ -552,6 +572,9 @@ function Quiz({ config, quizKey, onRestart }: QuizProps) {
           </div>
         )}
       </div>
+
+      {/* Ad banner below the map */}
+      <AdsterraBanner />
 
       {/* Found / missed tags (hidden in fixed layout) */}
       {foundNames.length > 0 && (
