@@ -10,24 +10,23 @@ import { saveScore } from './scores'
 // currentScript is null for dynamically-appended async scripts, so loading it
 // straight into the page silently fails. Running it inside a srcdoc iframe makes
 // the scripts parse synchronously (currentScript works) and sandboxes the ad.
-const AD_KEY = '201d3c619c25505fcf1ea81b9150f6c9'
-const AD_W = 160
-const AD_H = 300
+const SIDE_AD   = { key: '201d3c619c25505fcf1ea81b9150f6c9', w: 160, h: 300 }
+const BOTTOM_AD = { key: 'bb87690ee29676a7e144009afced991a', w: 728, h: 90 }
 
-function AdsterraBanner() {
+function AdsterraBanner({ adKey, width, height }: { adKey: string; width: number; height: number }) {
   const srcDoc =
     `<!doctype html><html><head><meta charset="utf-8">` +
     `<style>html,body{margin:0;padding:0;overflow:hidden}</style></head><body>` +
-    `<script type="text/javascript">atOptions={'key':'${AD_KEY}','format':'iframe','height':${AD_H},'width':${AD_W},'params':{}};<\/script>` +
-    `<script type="text/javascript" src="https://www.highperformanceformat.com/${AD_KEY}/invoke.js"><\/script>` +
+    `<script type="text/javascript">atOptions={'key':'${adKey}','format':'iframe','height':${height},'width':${width},'params':{}};<\/script>` +
+    `<script type="text/javascript" src="https://www.highperformanceformat.com/${adKey}/invoke.js"><\/script>` +
     `</body></html>`
   return (
     <iframe
       title="advertisement"
-      width={AD_W}
-      height={AD_H}
+      width={width}
+      height={height}
       scrolling="no"
-      style={{ border: 0, width: AD_W, height: AD_H, display: 'block', overflow: 'hidden' }}
+      style={{ border: 0, width, height, display: 'block', overflow: 'hidden' }}
       srcDoc={srcDoc}
     />
   )
@@ -623,13 +622,15 @@ export default function CountriesQuiz() {
 
   return (
     <>
-      {/* Ad banners flanking the map (wide viewports only) */}
+      {/* Ad banner beside the map (wide viewports only) */}
       <aside className="quiz-ad-rail quiz-ad-rail--left" aria-hidden="true">
-        <AdsterraBanner />
+        <AdsterraBanner adKey={SIDE_AD.key} width={SIDE_AD.w} height={SIDE_AD.h} />
       </aside>
-      <aside className="quiz-ad-rail quiz-ad-rail--right" aria-hidden="true">
-        <AdsterraBanner />
-      </aside>
+
+      {/* Fixed leaderboard pinned to the bottom of the viewport */}
+      <div className="quiz-ad-bottom" aria-hidden="true">
+        <AdsterraBanner adKey={BOTTOM_AD.key} width={BOTTOM_AD.w} height={BOTTOM_AD.h} />
+      </div>
 
       <div className="quiz-page">
         <div className="quiz-header">
