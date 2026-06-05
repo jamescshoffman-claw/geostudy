@@ -37,6 +37,8 @@ export interface QuizConfig {
   total: number
   projCenter: [number, number]
   projScale: number
+  projOffsetY?: number      // px to shift the rendered map vertically (+down / -up)
+  timerSeconds?: number     // round length override (default TIMER_SECONDS = 600)
   regionLabel: string
   winMsg: string
   inset?: InsetDef
@@ -454,6 +456,7 @@ export const CONFIGS: Record<RegionKey, QuizConfig> = {
     total: 196,
     projCenter: [10, 15],
     projScale: 150,
+    timerSeconds: 1200, // 20 minutes — the whole world is a lot to name
     regionLabel: 'recognized',
     winMsg: '🎉 You named all 196 countries of the world!',
   },
@@ -510,6 +513,7 @@ export const CONFIGS: Record<RegionKey, QuizConfig> = {
     total: 12,
     projCenter: [-58, -18],
     projScale: 400,
+    projOffsetY: -30, // shift up so the southern tip (Chile/Argentina) isn't clipped
     regionLabel: 'South American',
     winMsg: '🎉 You named all 12 countries of South America!',
   },

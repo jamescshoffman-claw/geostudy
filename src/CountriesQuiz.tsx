@@ -73,7 +73,8 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
   const [gameOver, setGameOver] = useState(false)
   const [won, setWon] = useState(false)
   const [started, setStarted] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS)
+  const timerSeconds = config.timerSeconds ?? TIMER_SECONDS
+  const [timeLeft, setTimeLeft] = useState(timerSeconds)
   const [copied, setCopied] = useState(false)
 
   // Tell the parent when a game is actively in progress (started, not yet over)
@@ -116,7 +117,7 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
       score,
       total: config.total,
       won,
-      elapsedSeconds: TIMER_SECONDS - timeLeft,
+      elapsedSeconds: timerSeconds - timeLeft,
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameOver])
@@ -127,7 +128,7 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
   const itemNounPlural = config.itemNounPlural ?? 'countries'
 
   const handleShare = () => {
-    const elapsed = TIMER_SECONDS - timeLeft
+    const elapsed = timerSeconds - timeLeft
     const timeStr = timeLeft === 0 ? 'Time ran out!' : `Finished in ${formatTime(elapsed)}`
     const resultLine = won
       ? `🎉 All ${config.total}/${config.total} ${itemNounPlural} found!`
@@ -177,7 +178,7 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
           .rotate([-config.projCenter[0], 0])
           .center([0, config.projCenter[1]])
           .scale(config.projScale)
-          .translate([W / 2, H / 2])
+          .translate([W / 2, H / 2 + (config.projOffsetY ?? 0)])
 
     const geoPath = d3.geoPath().projection(proj)
     const zoomG = svg.append<SVGGElement>('g')
