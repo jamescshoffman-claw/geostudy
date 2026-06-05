@@ -581,6 +581,11 @@ function Quiz({ config, quizKey, onRestart }: QuizProps) {
         )}
       </div>
 
+      {/* Leaderboard directly under the map, in normal flow */}
+      <div className="quiz-ad-undermap" aria-hidden="true">
+        <AdsterraBanner adKey={BOTTOM_AD.key} width={BOTTOM_AD.w} height={BOTTOM_AD.h} />
+      </div>
+
       {/* Found / missed tags (hidden in fixed layout) */}
       {foundNames.length > 0 && (
         <div className="quiz-tags-section">
@@ -626,11 +631,6 @@ export default function CountriesQuiz() {
       <aside className="quiz-ad-rail quiz-ad-rail--left" aria-hidden="true">
         <AdsterraBanner adKey={SIDE_AD.key} width={SIDE_AD.w} height={SIDE_AD.h} />
       </aside>
-
-      {/* Fixed leaderboard pinned to the bottom of the viewport */}
-      <div className="quiz-ad-bottom" aria-hidden="true">
-        <AdsterraBanner adKey={BOTTOM_AD.key} width={BOTTOM_AD.w} height={BOTTOM_AD.h} />
-      </div>
 
       <div className="quiz-page">
         <div className="quiz-header">

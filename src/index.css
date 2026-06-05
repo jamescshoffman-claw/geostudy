@@ -454,22 +454,15 @@ a { color: inherit; }
   .quiz-ad-rail--left { left: calc(50% - 480px - 20px - 160px); }
 }
 
-/* Fixed leaderboard pinned to the bottom of the viewport (728x90 needs width) */
-.quiz-ad-bottom { display: none; }
+/* Leaderboard in normal flow under the map (728x90 needs the width) */
+.quiz-ad-undermap { display: none; }
 
 @media (min-width: 768px) {
-  .quiz-ad-bottom {
-    display: block;
-    position: fixed;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-    width: 728px;
-    height: 90px;
-    z-index: 2;
+  .quiz-ad-undermap {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
   }
-  /* Reserve space so the fixed bar never permanently hides page content. */
-  body { padding-bottom: 100px; }
 }
 
 .quiz-subtitle {
