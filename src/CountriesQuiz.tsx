@@ -493,7 +493,6 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
     }
   }
 
-  const pct = Math.round((score / config.total) * 100)
   const timerWarning = timeLeft <= 60 && started && !gameOver
 
   return (
@@ -508,12 +507,6 @@ function Quiz({ config, quizKey, onRestart, onPlayingChange }: QuizProps) {
         </div>
         <div className={`quiz-timer${timerWarning ? ' quiz-timer--warning' : ''}`}>
           {formatTime(timeLeft)}
-        </div>
-        <div className="quiz-prog-wrap">
-          <div className="quiz-prog-bg">
-            <div className="quiz-prog-fill" style={{ width: `${pct}%` }} />
-          </div>
-          <div className="quiz-prog-label">{pct}%</div>
         </div>
       </div>
 

@@ -627,27 +627,6 @@ a { color: inherit; }
 .quiz-score-den { color: var(--ink); }
 .quiz-score-lbl { color: var(--ink-3); font-size: 1rem; font-weight: normal; margin-left: 4px; }
 
-.quiz-prog-wrap { width: 240px; }
-.quiz-prog-bg {
-  background: var(--bg-2);
-  border-radius: 999px;
-  height: 12px;
-  overflow: hidden;
-}
-.quiz-prog-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #16a34a, #4ade80);
-  width: 0%;
-  transition: width 0.4s ease;
-  border-radius: 999px;
-}
-.quiz-prog-label {
-  text-align: right;
-  font-size: 0.75rem;
-  color: var(--ink-3);
-  margin-top: 4px;
-}
-
 /* Input row */
 .quiz-input-row {
   display: flex;
