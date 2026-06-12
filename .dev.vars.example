@@ -1,0 +1,4 @@
+# Copy to .dev.vars (gitignored) for local `npm run dev:worker`.
+# Value: Supabase dashboard → Project Settings → API keys → secret key.
+# The deployed Worker gets this via: wrangler secret put SUPABASE_SECRET_KEY
+SUPABASE_SECRET_KEY=sb_secret_REPLACE_ME

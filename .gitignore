@@ -2,3 +2,7 @@ node_modules/
 dist/
 .DS_Store
 *.log
+
+# Local Worker secrets (template: .dev.vars.example)
+.dev.vars
+.wrangler/
